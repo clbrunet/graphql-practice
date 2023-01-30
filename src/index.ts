@@ -16,6 +16,10 @@ type User = {
   posts: Post[];
 };
 
+type UserInput = {
+  username: string;
+};
+
 const users: User[] = [
   {
     username: 'username_one',
@@ -37,14 +41,30 @@ const posts: Post[] = [
 users[0].posts.push(posts[0]);
 
 const root = {
-  users: () => {
+  users: (): User[] => {
     return users;
   },
-  user: ({ username }: User) => {
+  user: ({ username }: { username: string }): User | undefined => {
     return users.find((user) => user.username === username);
   },
-  posts: () => {
+  posts: (): Post[] => {
     return posts;
+  },
+  createUser: ({ input: { username } }: { input: UserInput }): User | undefined => {
+    if (users.find((user) => user.username === username)) {
+      return undefined;
+    }
+    const new_user: User = { username, posts: [] };
+    users.push(new_user);
+    return new_user;
+  },
+  updateUser: ({ username, input }: { username: string, input: UserInput }): User | undefined => {
+    const user = users.find((user) => user.username === username);
+    if (!user) {
+      return undefined;
+    }
+    user.username = input.username;
+    return user;
   },
 };
 

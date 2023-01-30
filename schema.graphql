@@ -14,3 +14,12 @@ type Query {
   user(username: String!): User
   posts: [Post!]!
 }
+
+input UserInput {
+  username: String!
+}
+
+type Mutation {
+  createUser(input: UserInput!): User
+  updateUser(username: String!, input: UserInput!): User
+}
