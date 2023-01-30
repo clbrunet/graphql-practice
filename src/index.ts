@@ -3,14 +3,60 @@ import { graphqlHTTP } from 'express-graphql';
 import { buildSchema } from 'graphql';
 
 const schema = buildSchema(`
+type User {
+username: String!
+posts: [Post!]!
+}
+
+type Post {
+title: String!
+content: String!
+author: User!
+}
+
 type Query {
-  hello: String
+users: [User!]!
+posts: [Post!]!
 }
 `);
 
+type Post = {
+  title: string;
+  content: string;
+  author: User,
+};
+
+type User = {
+  username: string;
+  posts: Post[];
+};
+
+const users: User[] = [
+  {
+    username: 'username_one',
+    posts: [],
+  },
+  {
+    username: 'username_two',
+    posts: [],
+  },
+];
+
+const posts: Post[] = [
+  {
+    title: 'title_one',
+    content: 'content_one',
+    author: users[0],
+  }
+];
+users[0].posts.push(posts[0]);
+
 const root = {
-  hello: () => {
-    return 'Hello world!';
+  users: () => {
+    return users;
+  },
+  posts: () => {
+    return posts;
   },
 };
 
