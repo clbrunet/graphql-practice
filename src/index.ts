@@ -1,24 +1,9 @@
+import { GraphQLFileLoader } from '@graphql-tools/graphql-file-loader';
+import { loadSchemaSync } from '@graphql-tools/load';
 import express from 'express';
 import { graphqlHTTP } from 'express-graphql';
-import { buildSchema } from 'graphql';
 
-const schema = buildSchema(`
-type User {
-username: String!
-posts: [Post!]!
-}
-
-type Post {
-title: String!
-content: String!
-author: User!
-}
-
-type Query {
-users: [User!]!
-posts: [Post!]!
-}
-`);
+const schema = loadSchemaSync('schema.graphql', { loaders: [new GraphQLFileLoader()], });
 
 type Post = {
   title: string;

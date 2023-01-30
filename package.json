@@ -20,6 +20,8 @@
     "typescript": "^4.9.4"
   },
   "dependencies": {
+    "@graphql-tools/graphql-file-loader": "^7.5.14",
+    "@graphql-tools/load": "^7.8.10",
     "express": "^4.18.2",
     "express-graphql": "^0.12.0",
     "graphql": "^15.8.0"
