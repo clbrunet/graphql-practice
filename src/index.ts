@@ -40,6 +40,9 @@ const root = {
   users: () => {
     return users;
   },
+  user: ({ username }: User) => {
+    return users.find((user) => user.username === username);
+  },
   posts: () => {
     return posts;
   },
