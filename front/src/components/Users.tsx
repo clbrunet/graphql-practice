@@ -1,7 +1,8 @@
 import { useQuery } from '@apollo/client';
 import { graphql } from './../gql';
+import CreateUser from './CreateUser';
 
-const GET_USERS = graphql(/* GraphQL */ `
+export const GET_USERS = graphql(/* GraphQL */ `
 query GetUsers {
   users {
     username
@@ -15,6 +16,7 @@ query GetUsers {
 
 function Users() {
   const { data } = useQuery(GET_USERS);
+
   const usersElements = data?.users.map((user) => {
     return (
       <pre style={{ textAlign: 'left' }} key={user.username}>
@@ -27,6 +29,7 @@ function Users() {
     <div className="Users">
       <h1>Users</h1>
       {usersElements}
+      <CreateUser />
     </div>
   );
 }
