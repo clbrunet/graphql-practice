@@ -1,18 +1,7 @@
-import { gql, useQuery } from "@apollo/client";
-import { Fragment } from "react";
+import { useQuery } from '@apollo/client';
+import { graphql } from './../gql';
 
-type User = {
-  username: string;
-  posts: Post[];
-};
-
-type Post = {
-  title: string;
-  content: string;
-  author: User,
-};
-
-const GET_USERS = gql`
+const GET_USERS = graphql(/* GraphQL */ `
 query GetUsers {
   users {
     username
@@ -22,23 +11,17 @@ query GetUsers {
     }
   }
 }
-`;
+`);
 
 function Users() {
-  const { data }: { data: { users: User[] } | undefined } = useQuery(GET_USERS);
-  if (!data) {
-    return (
-      <p>Loading ...</p>
-    );
-  }
-  const { users } = data;
-  const usersElements = users.map((user) => {
+  const { data } = useQuery(GET_USERS);
+  const usersElements = data?.users.map((user) => {
     return (
       <pre style={{ textAlign: 'left' }} key={user.username}>
         <code>{JSON.stringify(user, null, 2)}</code>
       </pre>
     );
-  });
+  }) || 'Loading...';
 
   return (
     <div className="Users">
