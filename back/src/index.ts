@@ -2,6 +2,7 @@ import { GraphQLFileLoader } from '@graphql-tools/graphql-file-loader';
 import { loadSchemaSync } from '@graphql-tools/load';
 import express from 'express';
 import { graphqlHTTP } from 'express-graphql';
+import cors from 'cors';
 
 const schema = loadSchemaSync('schema.graphql', { loaders: [new GraphQLFileLoader()], });
 
@@ -71,6 +72,7 @@ const root = {
 const app = express();
 const port = 4000;
 
+app.use(cors({ origin: 'http://localhost:3000' }));
 app.use('/graphql', graphqlHTTP({
   schema,
   rootValue: root,
