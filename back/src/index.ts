@@ -1,25 +1,9 @@
-import { GraphQLFileLoader } from '@graphql-tools/graphql-file-loader';
-import { loadSchemaSync } from '@graphql-tools/load';
-import express from 'express';
-import { graphqlHTTP } from 'express-graphql';
-import cors from 'cors';
+import { ApolloServer } from '@apollo/server';
+import { startStandaloneServer } from '@apollo/server/standalone';
+import { readFileSync } from 'fs';
+import { Post, Resolvers, User } from './generated/resolvers-types';
 
-const schema = loadSchemaSync('schema.graphql', { loaders: [new GraphQLFileLoader()], });
-
-type Post = {
-  title: string;
-  content: string;
-  author: User,
-};
-
-type User = {
-  username: string;
-  posts: Post[];
-};
-
-type UserInput = {
-  username: string;
-};
+const typeDefs = readFileSync('./src/schema.graphql', { encoding: 'utf-8' });
 
 const users: User[] = [
   {
@@ -41,44 +25,39 @@ const posts: Post[] = [
 ];
 users[0].posts.push(posts[0]);
 
-const root = {
-  users: (): User[] => {
-    return users;
+const resolvers: Resolvers = {
+  Query: {
+    users: () => {console.log(users); return users;},
+    user: (_, args) => users.find((user) => user.username === args.username),
+    posts: () => posts,
   },
-  user: ({ username }: { username: string }): User | undefined => {
-    return users.find((user) => user.username === username);
-  },
-  posts: (): Post[] => {
-    return posts;
-  },
-  createUser: ({ input: { username } }: { input: UserInput }): User | undefined => {
-    if (users.find((user) => user.username === username)) {
-      return undefined;
-    }
-    const new_user: User = { username, posts: [] };
-    users.push(new_user);
-    return new_user;
-  },
-  updateUser: ({ username, input }: { username: string, input: UserInput }): User | undefined => {
-    const user = users.find((user) => user.username === username);
-    if (!user) {
-      return undefined;
-    }
-    user.username = input.username;
-    return user;
-  },
+  Mutation: {
+    createUser: (_, args) => {
+      if (users.find((user) => user.username === args.input.username)) {
+        return undefined;
+      }
+      const new_user: User = { username: args.input.username, posts: [] };
+      users.push(new_user);
+      return new_user;
+    },
+    updateUser: (_, args) => {
+      const user = users.find((user) => user.username === args.username);
+      if (!user) {
+        return undefined;
+      }
+      user.username = args.input.username;
+      return user;
+    },
+  }
 };
 
-const app = express();
-const port = 4000;
-
-app.use(cors({ origin: 'http://localhost:3000' }));
-app.use('/graphql', graphqlHTTP({
-  schema,
-  rootValue: root,
-  graphiql: true,
-}));
-
-app.listen(port, () => {
-  console.log(`Listening on ${port}`);
+const server = new ApolloServer({
+  typeDefs,
+  resolvers,
 });
+
+const { url } = await startStandaloneServer(server, {
+  listen: { port: 4000 },
+});
+
+console.log(`🚀  Server ready at: ${url}`);
