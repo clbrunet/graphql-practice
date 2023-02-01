@@ -27,7 +27,7 @@ users[0].posts.push(posts[0]);
 
 const resolvers: Resolvers = {
   Query: {
-    users: () => {console.log(users); return users;},
+    users: () => users,
     user: (_, args) => users.find((user) => user.username === args.username),
     posts: () => posts,
   },

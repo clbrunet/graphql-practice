@@ -8,7 +8,7 @@
     "start": "node .",
     "build": "tsc",
     "codegen": "graphql-codegen --config codegen.yml",
-    "dev": "concurrently  --names \"codegen,tsc,nodemon\" -c \"yellow,blue,green\" \"graphql-codegen --config codegen.yml --watch 'src/**/*.ts'\"  \"tsc --watch\" \"nodemon .\""
+    "dev": "concurrently --names \"codegen,tsc,nodemon\" -c \"yellow,blue,green\" \"graphql-codegen --config codegen.yml --watch 'src/**/*.ts'\" \"tsc --watch\" \"nodemon .\""
   },
   "keywords": [],
   "author": "",
