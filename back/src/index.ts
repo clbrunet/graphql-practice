@@ -1,63 +1,121 @@
 import { ApolloServer } from '@apollo/server';
 import { startStandaloneServer } from '@apollo/server/standalone';
-import { readFileSync } from 'fs';
-import { Post, Resolvers, User } from './generated/resolvers-types';
+import { PrismaClient } from '@prisma/client';
+import { arg, inputObjectType, makeSchema, mutationType, nonNull, objectType, queryType, stringArg } from 'nexus';
+import { dirname, join } from 'path';
+import { fileURLToPath } from 'url';
 
-const typeDefs = readFileSync('./src/schema.graphql', { encoding: 'utf-8' });
 
-const users: User[] = [
-  {
-    username: 'username_one',
-    posts: [],
-  },
-  {
-    username: 'username_two',
-    posts: [],
-  },
-];
+const prisma = new PrismaClient();
 
-const posts: Post[] = [
-  {
-    title: 'title_one',
-    content: 'content_one',
-    author: users[0],
+const User = objectType({
+  name: 'User',
+  definition(t) {
+    t.nonNull.string('username');
+    t.nonNull.list.nonNull.field('posts', {
+      type: 'Post',
+      resolve: (parent, _args, _context) => {
+        return prisma.user.findUnique({ where: { id: parent.id } }).posts();
+      },
+    });
   }
-];
-users[0].posts.push(posts[0]);
-
-const resolvers: Resolvers = {
-  Query: {
-    users: () => users,
-    user: (_, args) => users.find((user) => user.username === args.username),
-    posts: () => posts,
-  },
-  Mutation: {
-    createUser: (_, args) => {
-      if (users.find((user) => user.username === args.input.username)) {
-        return undefined;
-      }
-      const new_user: User = { username: args.input.username, posts: [] };
-      users.push(new_user);
-      return new_user;
-    },
-    updateUser: (_, args) => {
-      const user = users.find((user) => user.username === args.username);
-      if (!user) {
-        return undefined;
-      }
-      user.username = args.input.username;
-      return user;
-    },
-  }
-};
-
-const server = new ApolloServer({
-  typeDefs,
-  resolvers,
 });
+
+const Post = objectType({
+  name: 'Post',
+  definition(t) {
+    t.nonNull.string('title');
+    t.nonNull.string('content');
+    t.nonNull.field('author', {
+      type: 'User',
+      resolve: (parent, _args, _context) => {
+        return prisma.post.findUnique({ where: { id: parent.id } }).author();
+      },
+    });
+  },
+});
+
+const Query = queryType({
+  definition(t) {
+    t.nonNull.list.nonNull.field('users', {
+      type: 'User',
+      resolve: (_parent, _args, _context) => {
+        return prisma.user.findMany();
+      },
+    });
+    t.field('user', {
+      type: 'User',
+      args: {
+        username: nonNull(stringArg()),
+      },
+      resolve: (_parent, args, _context) => {
+        return prisma.user.findUnique({ where: { username: args.username } });
+      },
+    });
+    t.nonNull.list.nonNull.field('posts', {
+      type: 'Post',
+      resolve: (_parent, _args, _context) => {
+        return prisma.post.findMany();
+      },
+    });
+  },
+});
+
+const UserInput = inputObjectType({
+  name: 'UserInput',
+  definition(t) {
+    t.nonNull.string('username');
+  },
+});
+
+const Mutation = mutationType({
+  definition(t) {
+    t.field('createUser', {
+      type: 'User',
+      args: {
+        input: nonNull(arg({ type: 'UserInput' })),
+      },
+      resolve: (_parent, args, _context) => {
+        return prisma.user.create({
+          data: {
+            username: args.input.username,
+          },
+        });
+      },
+    });
+    t.field('updateUser', {
+      type: 'User',
+      args: {
+        username: nonNull(stringArg()),
+        input: nonNull(arg({ type: 'UserInput' })),
+      },
+      resolve: (_parent, args, _context) => {
+        return prisma.user.update({
+          where: { username: args.username },
+          data: { username: args.input.username },
+        });
+      },
+    });
+  },
+});
+
+const schema = makeSchema({
+  types: [
+    User,
+    Post,
+    Query,
+    UserInput,
+    Mutation,
+  ],
+  outputs: {
+    schema: join(dirname(fileURLToPath(import.meta.url)), '/../schema.gen.graphql'),
+  },
+});
+
+const server = new ApolloServer({ schema });
 
 const { url } = await startStandaloneServer(server, {
   listen: { port: 4000 },
 });
 
-console.log(`🚀  Server ready at: ${url}`);
+console.log(`🚀  Server ready at: ${url}`)

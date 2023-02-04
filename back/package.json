@@ -1,5 +1,5 @@
 {
-  "name": "new_back",
+  "name": "back",
   "version": "1.0.0",
   "description": "",
   "main": "dist/index.js",
@@ -7,23 +7,23 @@
   "scripts": {
     "start": "node .",
     "build": "tsc",
-    "codegen": "graphql-codegen --config codegen.yml",
-    "dev": "concurrently --names \"codegen,tsc,nodemon\" -c \"yellow,blue,green\" \"graphql-codegen --config codegen.yml --watch 'src/**/*.ts'\" \"tsc --watch\" \"nodemon .\""
+    "prisema:generate": "prisma generate",
+    "dev": "concurrently --names \"prisma generate,tsc,nodemon\" -c \"yellow,blue,green\" \"prisma generate --watch\" \"tsc --watch\" \"nodemon .\""
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
     "@apollo/server": "^4.3.2",
-    "graphql": "^16.6.0"
+    "@prisma/client": "^4.9.0",
+    "graphql": "^16.6.0",
+    "nexus": "^1.3.0"
   },
   "devDependencies": {
-    "@graphql-codegen/cli": "2.16.5",
-    "@graphql-codegen/typescript": "2.8.8",
-    "@graphql-codegen/typescript-resolvers": "2.7.13",
     "@types/node": "^18.11.18",
     "concurrently": "^7.6.0",
     "nodemon": "^2.0.20",
+    "prisma": "^4.9.0",
     "typescript": "^4.9.5"
   }
 }
