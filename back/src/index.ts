@@ -1,7 +1,7 @@
 import { ApolloServer } from '@apollo/server';
 import { startStandaloneServer } from '@apollo/server/standalone';
-import { Context, context } from './context';
-import schema from './schema';
+import { Context, context } from './context.js';
+import schema from './schema.js';
 
 const server = new ApolloServer<Context>({ schema });
 
