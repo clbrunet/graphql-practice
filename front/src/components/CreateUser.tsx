@@ -33,13 +33,16 @@ function CreateUser() {
   }
 
   return (
-    <form onSubmit={handleSubmit}>
-      <label>
-        Username :
-        <input type='text' value={username} onChange={handleChange} />
-      </label>
-      <input type='submit' />
-    </form>
+    <>
+      <h4>Create User :</h4>
+      <form onSubmit={handleSubmit}>
+        <label>
+          Username :
+          <input type='text' value={username} onChange={handleChange} />
+        </label>
+        <input type='submit' />
+      </form>
+    </>
   );
 }
 
