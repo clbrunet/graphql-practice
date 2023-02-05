@@ -14,7 +14,8 @@ type Post {
 }
 
 type Query {
-  posts: [Post!]!
+  allPosts: [Post!]!
+  posts(username: String!): [Post!]!
   user(username: String!): User
   users: [User!]!
 }

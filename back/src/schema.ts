@@ -47,12 +47,22 @@ const Query = queryType({
         return context.prisma.user.findUnique({ where: { username: args.username } });
       },
     });
-    t.nonNull.list.nonNull.field('posts', {
+    t.nonNull.list.nonNull.field('allPosts', {
       type: 'Post',
       resolve: (_parent, _args, context: Context) => {
         return context.prisma.post.findMany();
       },
     });
+    t.nonNull.list.nonNull.field('posts', {
+      type: 'Post',
+      args: {
+        username: nonNull(stringArg()),
+      },
+      resolve: (_parent, args, context: Context) => {
+        return context.prisma.user.findUnique({ where: { username: args.username } }).posts();
+      },
+    });
+
   },
 });
 
