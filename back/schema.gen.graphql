@@ -3,8 +3,7 @@
 
 
 type Mutation {
-  createUser(input: UserInput!): User
-  updateUser(input: UserInput!, username: String!): User
+  login(password: String!, username: String!): String
 }
 
 type Post {
@@ -15,8 +14,8 @@ type Post {
 
 type Query {
   allPosts: [Post!]!
-  posts(username: String!): [Post!]!
-  user(username: String!): User
+  posts(username: String): [Post!]
+  user(username: String): User
   users: [User!]!
 }
 

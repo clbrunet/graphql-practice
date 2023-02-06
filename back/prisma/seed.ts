@@ -10,6 +10,7 @@ async function main() {
     update: {},
     create: {
       username: 'alice',
+      password: 'passalice',
       posts: {
         create: {
           title: 'Hey',
@@ -25,6 +26,7 @@ async function main() {
     update: {},
     create: {
       username: 'bob',
+      password: 'passbob',
       posts: {
         create: [
           {

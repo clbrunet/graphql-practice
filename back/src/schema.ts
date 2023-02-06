@@ -1,7 +1,8 @@
-import { arg, inputObjectType, makeSchema, mutationType, nonNull, objectType, queryType, stringArg } from 'nexus';
+import { inputObjectType, makeSchema, mutationType, nonNull, objectType, queryType, stringArg } from 'nexus';
 import { dirname, join } from 'path';
 import { fileURLToPath } from 'url';
 import { Context } from './context';
+import jwt from 'jsonwebtoken';
 
 const User = objectType({
   name: 'User',
@@ -41,9 +42,13 @@ const Query = queryType({
     t.field('user', {
       type: 'User',
       args: {
-        username: nonNull(stringArg()),
+        username: stringArg(),
       },
       resolve: (_parent, args, context: Context) => {
+        let { username } = args;
+        if (username === undefined) {
+          username = context.username;
+        }
         return context.prisma.user.findUnique({ where: { username: args.username } });
       },
     });
@@ -53,13 +58,17 @@ const Query = queryType({
         return context.prisma.post.findMany();
       },
     });
-    t.nonNull.list.nonNull.field('posts', {
+    t.list.nonNull.field('posts', {
       type: 'Post',
       args: {
-        username: nonNull(stringArg()),
+        username: stringArg(),
       },
       resolve: (_parent, args, context: Context) => {
-        return context.prisma.user.findUnique({ where: { username: args.username } }).posts();
+        let { username } = args;
+        if (username === undefined) {
+          username = context.username;
+        }
+        return context.prisma.user.findUnique({ where: { username } }).posts();
       },
     });
   },
@@ -74,30 +83,17 @@ const UserInput = inputObjectType({
 
 const Mutation = mutationType({
   definition(t) {
-    t.field('createUser', {
-      type: 'User',
-      args: {
-        input: nonNull(arg({ type: 'UserInput' })),
-      },
-      resolve: (_parent, args, context: Context) => {
-        return context.prisma.user.create({
-          data: {
-            username: args.input.username,
-          },
-        });
-      },
-    });
-    t.field('updateUser', {
-      type: 'User',
+    t.string('login', {
       args: {
         username: nonNull(stringArg()),
-        input: nonNull(arg({ type: 'UserInput' })),
+        password: nonNull(stringArg()),
       },
-      resolve: (_parent, args, context: Context) => {
-        return context.prisma.user.update({
-          where: { username: args.username },
-          data: { username: args.input.username },
-        });
+      resolve: async (_parent, args, context: Context) => {
+        let user = await context.prisma.user.findUnique({ where: { username: args.username } });
+        if (user && args.password === user.password) {
+          return jwt.sign({ username: user.username }, process.env.JWT_SECRET);
+        }
+        return null;
       },
     });
   },
