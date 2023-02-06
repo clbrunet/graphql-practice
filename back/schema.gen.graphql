@@ -3,7 +3,7 @@
 
 
 type Mutation {
-  login(password: String!, username: String!): String
+  login(password: String!, username: String!): String!
 }
 
 type Post {
@@ -21,9 +21,5 @@ type Query {
 
 type User {
   posts: [Post!]!
-  username: String!
-}
-
-input UserInput {
   username: String!
 }

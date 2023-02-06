@@ -3,6 +3,7 @@ import '../styles/App.css';
 import Header from './Header';
 import Users from './Users';
 import User from './User';
+import Login from './Login';
 
 function App() {
   return (
@@ -12,6 +13,7 @@ function App() {
         <Route path="/" />
         <Route path="/users" element={<Users />} />
         <Route path="/users/:username" element={<User />} />
+        <Route path="/login" element={<Login />} />
       </Routes>
     </div>
   );

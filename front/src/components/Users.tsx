@@ -1,7 +1,6 @@
 import { useQuery } from '@apollo/client';
 import { useNavigate } from 'react-router-dom';
 import { graphql } from '../gql';
-import CreateUser from './CreateUser';
 
 export const GET_USERS = graphql(/* GraphQL */ `
 query GetUsers {
@@ -35,7 +34,6 @@ function Users() {
     <div className="Users">
       <h1>Users :</h1>
       {usersElements}
-      <CreateUser />
     </div>
   );
 }

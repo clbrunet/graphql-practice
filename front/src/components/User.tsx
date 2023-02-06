@@ -20,7 +20,7 @@ function User() {
     }
   });
 
-  const postsElements = data?.posts.map((post, index) => {
+  const postsElements = data?.posts?.map((post, index) => {
     return (
       <pre style={{ textAlign: 'left' }} key={index}>
         <code>{JSON.stringify(post, null, 2)}</code>

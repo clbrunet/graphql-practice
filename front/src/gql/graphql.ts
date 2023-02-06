@@ -16,18 +16,12 @@ export type Scalars = {
 
 export type Mutation = {
   __typename?: 'Mutation';
-  createUser?: Maybe<User>;
-  updateUser?: Maybe<User>;
+  login: Scalars['String'];
 };
 
 
-export type MutationCreateUserArgs = {
-  input: UserInput;
-};
-
-
-export type MutationUpdateUserArgs = {
-  input: UserInput;
+export type MutationLoginArgs = {
+  password: Scalars['String'];
   username: Scalars['String'];
 };
 
@@ -41,19 +35,19 @@ export type Post = {
 export type Query = {
   __typename?: 'Query';
   allPosts: Array<Post>;
-  posts: Array<Post>;
+  posts?: Maybe<Array<Post>>;
   user?: Maybe<User>;
   users: Array<User>;
 };
 
 
 export type QueryPostsArgs = {
-  username: Scalars['String'];
+  username?: InputMaybe<Scalars['String']>;
 };
 
 
 export type QueryUserArgs = {
-  username: Scalars['String'];
+  username?: InputMaybe<Scalars['String']>;
 };
 
 export type User = {
@@ -62,23 +56,20 @@ export type User = {
   username: Scalars['String'];
 };
 
-export type UserInput = {
+export type LoginMutationVariables = Exact<{
   username: Scalars['String'];
-};
-
-export type CreateUserMutationVariables = Exact<{
-  input: UserInput;
+  password: Scalars['String'];
 }>;
 
 
-export type CreateUserMutation = { __typename?: 'Mutation', createUser?: { __typename?: 'User', username: string } | null };
+export type LoginMutation = { __typename?: 'Mutation', login: string };
 
 export type GetUserPostsQueryVariables = Exact<{
   username: Scalars['String'];
 }>;
 
 
-export type GetUserPostsQuery = { __typename?: 'Query', posts: Array<{ __typename?: 'Post', title: string, content: string }> };
+export type GetUserPostsQuery = { __typename?: 'Query', posts?: Array<{ __typename?: 'Post', title: string, content: string }> | null };
 
 export type GetUsersQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -86,6 +77,6 @@ export type GetUsersQueryVariables = Exact<{ [key: string]: never; }>;
 export type GetUsersQuery = { __typename?: 'Query', users: Array<{ __typename?: 'User', username: string, posts: Array<{ __typename?: 'Post', title: string, content: string }> }> };
 
 
-export const CreateUserDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"CreateUser"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UserInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"createUser"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"username"}}]}}]}}]} as unknown as DocumentNode<CreateUserMutation, CreateUserMutationVariables>;
+export const LoginDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"Login"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"username"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"password"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"login"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"username"},"value":{"kind":"Variable","name":{"kind":"Name","value":"username"}}},{"kind":"Argument","name":{"kind":"Name","value":"password"},"value":{"kind":"Variable","name":{"kind":"Name","value":"password"}}}]}]}}]} as unknown as DocumentNode<LoginMutation, LoginMutationVariables>;
 export const GetUserPostsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetUserPosts"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"username"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"posts"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"username"},"value":{"kind":"Variable","name":{"kind":"Name","value":"username"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"content"}}]}}]}}]} as unknown as DocumentNode<GetUserPostsQuery, GetUserPostsQueryVariables>;
 export const GetUsersDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetUsers"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"users"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"username"}},{"kind":"Field","name":{"kind":"Name","value":"posts"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"content"}}]}}]}}]}}]} as unknown as DocumentNode<GetUsersQuery, GetUsersQueryVariables>;

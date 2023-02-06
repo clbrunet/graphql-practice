@@ -16,7 +16,8 @@ const prisma = new PrismaClient();
 export const context = async ({ req }: StandaloneServerContextFunctionArgument): Promise<Context> => {
   let username: string;
   try {
-    let payload = jwt.verify(req.headers.authorization.split(' ')[1], process.env.JWT_SECRET) as JwtPayload;
+    let payload = jwt.verify(req.headers.authorization.split(' ')[1],
+      process.env.ACCESS_TOKEN_SECRET) as JwtPayload;
     username = payload.username;
   } catch (error) {
   }

@@ -9,6 +9,9 @@ function Header() {
       <Link to="/users">
         Users
       </Link>
+      <Link to="/login">
+        Login
+      </Link>
     </div>
   );
 }

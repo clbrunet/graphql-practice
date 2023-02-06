@@ -1,8 +1,9 @@
-import { inputObjectType, makeSchema, mutationType, nonNull, objectType, queryType, stringArg } from 'nexus';
+import { makeSchema, mutationType, nonNull, objectType, queryType, stringArg } from 'nexus';
 import { dirname, join } from 'path';
 import { fileURLToPath } from 'url';
 import { Context } from './context';
 import jwt from 'jsonwebtoken';
+import { GraphQLError } from 'graphql';
 
 const User = objectType({
   name: 'User',
@@ -74,26 +75,19 @@ const Query = queryType({
   },
 });
 
-const UserInput = inputObjectType({
-  name: 'UserInput',
-  definition(t) {
-    t.nonNull.string('username');
-  },
-});
-
 const Mutation = mutationType({
   definition(t) {
-    t.string('login', {
+    t.nonNull.string('login', {
       args: {
         username: nonNull(stringArg()),
         password: nonNull(stringArg()),
       },
       resolve: async (_parent, args, context: Context) => {
         let user = await context.prisma.user.findUnique({ where: { username: args.username } });
-        if (user && args.password === user.password) {
-          return jwt.sign({ username: user.username }, process.env.JWT_SECRET);
+        if (!user || args.password !== user.password) {
+          throw new GraphQLError('Invalid username or password')
         }
-        return null;
+        return jwt.sign({ username: user.username }, process.env.ACCESS_TOKEN_SECRET);
       },
     });
   },
@@ -104,7 +98,6 @@ const schema = makeSchema({
     User,
     Post,
     Query,
-    UserInput,
     Mutation,
   ],
   outputs: {
