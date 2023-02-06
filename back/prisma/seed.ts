@@ -3,8 +3,12 @@ import { PrismaClient } from '@prisma/client'
 const prisma = new PrismaClient()
 
 async function main() {
-  await prisma.user.create({
-    data: {
+  await prisma.user.upsert({
+    where: {
+      username: 'alice',
+    },
+    update: {},
+    create: {
       username: 'alice',
       posts: {
         create: {
@@ -14,8 +18,12 @@ async function main() {
       },
     },
   });
-  await prisma.user.create({
-    data: {
+  await prisma.user.upsert({
+    where: {
+      username: 'bob',
+    },
+    update: {},
+    create: {
       username: 'bob',
       posts: {
         create: [

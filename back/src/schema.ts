@@ -62,7 +62,6 @@ const Query = queryType({
         return context.prisma.user.findUnique({ where: { username: args.username } }).posts();
       },
     });
-
   },
 });
 

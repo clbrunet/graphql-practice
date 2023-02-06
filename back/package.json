@@ -8,6 +8,7 @@
     "start": "node .",
     "build": "tsc",
     "prisma:migrate": "prisma migrate dev",
+    "prisma:seed": "prisma db seed",
     "prisma:generate": "prisma generate",
     "dev": "concurrently --names \"prisma generate,tsc,nodemon\" -c \"yellow,blue,green\" \"prisma generate --watch\" \"tsc --watch\" \"nodemon .\""
   },
