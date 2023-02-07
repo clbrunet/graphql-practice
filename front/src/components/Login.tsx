@@ -1,5 +1,6 @@
 import { useMutation } from '@apollo/client';
 import { ChangeEvent, Dispatch, FormEvent, SetStateAction, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { JWT_KEY } from '../contants';
 import { graphql } from '../gql';
 
@@ -10,6 +11,7 @@ mutation Login($username: String!, $password: String!) {
 `);
 
 function Login() {
+  const navigate = useNavigate();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [login] = useMutation(LOGIN, {
@@ -19,6 +21,7 @@ function Login() {
     },
     onCompleted(data, _clientOptions) {
       localStorage.setItem(JWT_KEY, data.login);
+      navigate('/');
     },
   });
 
