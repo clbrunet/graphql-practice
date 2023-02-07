@@ -6,13 +6,14 @@ import reportWebVitals from './reportWebVitals';
 import { ApolloClient, ApolloProvider, createHttpLink, InMemoryCache } from '@apollo/client';
 import { setContext } from '@apollo/client/link/context';
 import { BrowserRouter } from 'react-router-dom';
+import { JWT_KEY } from './contants';
 
 const httpLink = createHttpLink({
   uri: 'http://localhost:4000/graphql',
 });
 
 const authLink = setContext((_, { headers }) => {
-  const jwt = localStorage.getItem('jwt');
+  const jwt = localStorage.getItem(JWT_KEY);
   return {
     headers: {
       ...headers,

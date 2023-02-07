@@ -1,5 +1,6 @@
 import { useMutation } from '@apollo/client';
 import { ChangeEvent, Dispatch, FormEvent, SetStateAction, useState } from 'react';
+import { JWT_KEY } from '../contants';
 import { graphql } from '../gql';
 
 const LOGIN = graphql(/* GraphQL */ `
@@ -17,7 +18,7 @@ function Login() {
       password: password,
     },
     onCompleted(data, _clientOptions) {
-      localStorage.setItem('jwt', data.login);
+      localStorage.setItem(JWT_KEY, data.login);
     },
   });
 
