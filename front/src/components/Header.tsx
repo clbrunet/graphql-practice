@@ -1,9 +1,11 @@
+import { useApolloClient } from '@apollo/client';
 import { Link, useNavigate } from 'react-router-dom';
 import { JWT_KEY } from '../contants';
 
 function Header() {
   const jwt = localStorage.getItem(JWT_KEY);
   const navigate = useNavigate();
+  const client = useApolloClient();
 
   return (
     <div style={{ display: 'flex', justifyContent: 'space-around' }}>
@@ -16,6 +18,7 @@ function Header() {
       {jwt ?
         <button onClick={() => {
           localStorage.removeItem(JWT_KEY);
+          client.resetStore();
           navigate('/');
         }}>
           Logout

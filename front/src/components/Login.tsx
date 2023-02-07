@@ -19,8 +19,9 @@ function Login() {
       username: username,
       password: password,
     },
-    onCompleted(data, _clientOptions) {
+    onCompleted(data, clientOptions) {
       localStorage.setItem(JWT_KEY, data.login);
+      clientOptions?.client?.resetStore();
       navigate('/');
     },
   });
