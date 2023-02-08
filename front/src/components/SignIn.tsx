@@ -20,6 +20,7 @@ function SignIn() {
   const [form, setForm] = useState({
     username: '',
     password: '',
+    error_message: '',
   });
   const variables = {
     username: form.username,
@@ -32,17 +33,28 @@ function SignIn() {
     client.resetStore();
     navigate('/');
   };
-
+  const onSignInError = (message: string) => {
+    setForm((prev) => ({
+      ...prev,
+      error_message: message
+    }));
+  };
   const [login] = useMutation(LOGIN, {
     variables,
     onCompleted(data, _clientOptions) {
       onSignInCompleted(data.login);
+    },
+    onError(error, _clientOptions) {
+      onSignInError(error.message);
     },
   });
   const [register] = useMutation(REGISTER, {
     variables,
     onCompleted(data, _clientOptions) {
       onSignInCompleted(data.register);
+    },
+    onError(error, _clientOptions) {
+      onSignInError(error.message);
     },
   });
 
@@ -65,6 +77,7 @@ function SignIn() {
             password: event.target.value,
           }))} />
       </label>
+      {form.error_message && <p style={{ color: 'red' }}>{form.error_message}</p>}
       <button onClick={() => login()} style={{ margin: 'auto' }}>Login</button>
       <button onClick={() => register()} style={{ margin: 'auto' }}>Register</button>
     </form>
