@@ -31,8 +31,8 @@ function Header() {
       {username ?
         <button onClick={() => logout()}>Logout</button>
         :
-        <Link to="/login">
-          Login
+        <Link to="/signIn">
+          Sign in
         </Link>
       }
     </div>

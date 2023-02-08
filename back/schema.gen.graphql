@@ -5,6 +5,7 @@
 type Mutation {
   login(password: String!, username: String!): String!
   logout: String
+  register(password: String!, username: String!): String!
   relogin: String
 }
 

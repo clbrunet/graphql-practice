@@ -4,6 +4,9 @@ import { fileURLToPath } from 'url';
 import { Context } from './context';
 import jwt from 'jsonwebtoken';
 import { GraphQLError } from 'graphql';
+import { Response } from 'express';
+import bcrypt from 'bcrypt';
+import { JWT_COOKIE_KEY, SALT_ROUNDS } from './constants.js';
 
 const User = objectType({
   name: 'User',
@@ -75,8 +78,37 @@ const Query = queryType({
   },
 });
 
+const signIn = (username: string, res: Response): string  => {
+  let access_token = jwt.sign({ username }, process.env.ACCESS_TOKEN_SECRET, {
+    expiresIn: '7d'
+  });
+  res.cookie(JWT_COOKIE_KEY, access_token, {
+    httpOnly: true,
+  });
+  return username;
+}
+
 const Mutation = mutationType({
   definition(t) {
+    t.nonNull.string('register', {
+      args: {
+        username: nonNull(stringArg()),
+        password: nonNull(stringArg()),
+      },
+      resolve: async (_parent, args, context: Context) => {
+        let user = await context.prisma.user.findUnique({ where: { username: args.username } });
+        if (user) {
+          throw new GraphQLError('Username already exists')
+        }
+        await context.prisma.user.create({
+          data: {
+            username: args.username,
+            password: bcrypt.hashSync(args.password, SALT_ROUNDS),
+          }
+        });
+        return signIn(args.username, context.res);
+      },
+    });
     t.nonNull.string('login', {
       args: {
         username: nonNull(stringArg()),
@@ -84,16 +116,10 @@ const Mutation = mutationType({
       },
       resolve: async (_parent, args, context: Context) => {
         let user = await context.prisma.user.findUnique({ where: { username: args.username } });
-        if (!user || args.password !== user.password) {
+        if (!user || !bcrypt.compareSync(args.password, user.password)) {
           throw new GraphQLError('Invalid username or password')
         }
-        let access_token = jwt.sign({ username: user.username }, process.env.ACCESS_TOKEN_SECRET, {
-          expiresIn: '7d'
-        });
-        context.res.cookie('jwt', access_token, {
-          httpOnly: true,
-        });
-        return user.username;
+        return signIn(user.username, context.res);
       },
     });
     t.string('relogin', {
@@ -101,18 +127,12 @@ const Mutation = mutationType({
         if (!context.username) {
           return null;
         }
-        let access_token = jwt.sign({ username: context.username }, process.env.ACCESS_TOKEN_SECRET, {
-          expiresIn: '7d'
-        });
-        context.res.cookie('jwt', access_token, {
-          httpOnly: true,
-        });
-        return context.username;
+        return signIn(context.username, context.res);
       },
     });
     t.string('logout', {
       resolve: async (_parent, _args, context: Context) => {
-        context.res.clearCookie('jwt');
+        context.res.clearCookie(JWT_COOKIE_KEY);
         return context.username;
       },
     });

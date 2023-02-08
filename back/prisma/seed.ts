@@ -1,32 +1,27 @@
 import { PrismaClient } from '@prisma/client'
+import bcrypt from 'bcrypt';
+import { SALT_ROUNDS } from '../src/constants.js';
 
 const prisma = new PrismaClient()
 
 async function main() {
-  await prisma.user.upsert({
-    where: {
+  await prisma.user.deleteMany();
+  await prisma.user.create({
+    data: {
       username: 'alice',
-    },
-    update: {},
-    create: {
-      username: 'alice',
-      password: 'passalice',
+      password: bcrypt.hashSync('palice', SALT_ROUNDS),
       posts: {
         create: {
           title: 'Hey',
           content: 'Content of "Hey"',
         }
       },
-    },
+    }
   });
-  await prisma.user.upsert({
-    where: {
+  await prisma.user.create({
+    data: {
       username: 'bob',
-    },
-    update: {},
-    create: {
-      username: 'bob',
-      password: 'passbob',
+      password: bcrypt.hashSync('pbob', SALT_ROUNDS),
       posts: {
         create: [
           {

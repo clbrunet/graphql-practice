@@ -3,7 +3,7 @@ import '../styles/App.css';
 import Header from './Header';
 import Users from './Users';
 import User from './User';
-import Login from './Login';
+import SignIn from './SignIn';
 import { graphql } from '../gql';
 import { useMutation } from '@apollo/client';
 import { useEffect } from 'react';
@@ -36,7 +36,7 @@ function App() {
         <Route path="/" element={'Home'} />
         <Route path="/users" element={<Users />} />
         <Route path="/users/:username" element={<User />} />
-        <Route path="/login" element={<Login />} />
+        <Route path="/signin" element={<SignIn />} />
       </Routes>
     </div>
   );
