@@ -2,6 +2,7 @@ import { useQuery } from '@apollo/client';
 import { graphql } from '../gql';
 
 import { useParams } from 'react-router-dom';
+import Post from '../components/Post';
 
 export const GET_USER_POSTS = graphql(/* GraphQL */ `
 query GetUserPosts($username: String!) {
@@ -22,10 +23,7 @@ function User() {
 
   const postsElements = data?.posts?.map((post, index) => {
     return (
-      <div style={{ borderStyle: 'solid', width: 'fit-content', padding: '5px', marginBottom: '15px' }} key={index}>
-        <h4>{post.title}</h4>
-        <p>{post.content}</p>
-      </div>
+      <Post title={post.title} content={post.content} key={index} />
     );
   }) || 'Loading...';
 

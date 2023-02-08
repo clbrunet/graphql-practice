@@ -1,13 +1,13 @@
 import { Route, Routes } from 'react-router-dom';
-import '../styles/App.css';
-import Header from './Header';
-import Users from './Users';
-import User from './User';
-import SignIn from './SignIn';
-import { graphql } from '../gql';
+import './styles/App.css';
+import Header from './components/Header';
+import Users from './pages/Users';
+import User from './pages/User';
+import SignIn from './pages/SignIn';
+import { graphql } from './gql';
 import { useMutation } from '@apollo/client';
 import { useEffect } from 'react';
-import { setUsername } from '../username';
+import { setUsername } from './username';
 
 const RELOGIN = graphql(/* GraphQL */`
 mutation Relogin {
