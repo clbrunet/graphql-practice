@@ -1,11 +1,24 @@
-import { useApolloClient } from '@apollo/client';
+import { useMutation } from '@apollo/client';
 import { Link, useNavigate } from 'react-router-dom';
-import { JWT_KEY } from '../contants';
+import { graphql } from '../gql';
+import { clearUsername, getUsername } from '../username';
+
+const LOGOUT = graphql(/* GraphQL */ `
+mutation Logout {
+  logout
+}
+`);
 
 function Header() {
-  const jwt = localStorage.getItem(JWT_KEY);
+  const username = getUsername();
   const navigate = useNavigate();
-  const client = useApolloClient();
+  const [logout] = useMutation(LOGOUT, {
+    onCompleted(_data, clientOptions) {
+      clearUsername();
+      clientOptions?.client?.resetStore();
+      navigate('/');
+    },
+  });
 
   return (
     <div style={{ display: 'flex', justifyContent: 'space-around' }}>
@@ -15,14 +28,8 @@ function Header() {
       <Link to="/users">
         Users
       </Link>
-      {jwt ?
-        <button onClick={() => {
-          localStorage.removeItem(JWT_KEY);
-          client.resetStore();
-          navigate('/');
-        }}>
-          Logout
-        </button>
+      {username ?
+        <button onClick={() => logout()}>Logout</button>
         :
         <Link to="/login">
           Login

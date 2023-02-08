@@ -1,8 +1,8 @@
 import { useMutation } from '@apollo/client';
-import { ChangeEvent, Dispatch, FormEvent, SetStateAction, useState } from 'react';
+import { FormEvent, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { JWT_KEY } from '../contants';
 import { graphql } from '../gql';
+import { setUsername } from '../username';
 
 const LOGIN = graphql(/* GraphQL */ `
 mutation Login($username: String!, $password: String!) {
@@ -12,24 +12,21 @@ mutation Login($username: String!, $password: String!) {
 
 function Login() {
   const navigate = useNavigate();
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
+  const [form, setForm] = useState({
+    username: '',
+    password: '',
+  });
   const [login] = useMutation(LOGIN, {
     variables: {
-      username: username,
-      password: password,
+      username: form.username,
+      password: form.password,
     },
     onCompleted(data, clientOptions) {
-      localStorage.setItem(JWT_KEY, data.login);
+      setUsername(data.login);
       clientOptions?.client?.resetStore();
       navigate('/');
     },
   });
-
-  const handleChange = (setState: Dispatch<SetStateAction<string>>,
-    event: ChangeEvent<HTMLInputElement>) => {
-    setState(event.target.value);
-  }
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -42,13 +39,19 @@ function Login() {
       <form onSubmit={handleSubmit}>
         <label>
           Username :
-          <input type='text' value={username}
-            onChange={(event) => handleChange(setUsername, event)} />
+          <input type='text' value={form.username}
+            onChange={(event) => setForm((prev) => ({
+              ...prev,
+              username: event.target.value,
+            }))} />
         </label>
         <label>
           Password :
-          <input type='text' value={password}
-            onChange={(event) => handleChange(setPassword, event)} />
+          <input type='text' value={form.password}
+            onChange={(event) => setForm((prev) => ({
+              ...prev,
+              password: event.target.value,
+            }))} />
         </label>
         <input type='submit' />
       </form>

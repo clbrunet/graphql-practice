@@ -87,7 +87,33 @@ const Mutation = mutationType({
         if (!user || args.password !== user.password) {
           throw new GraphQLError('Invalid username or password')
         }
-        return jwt.sign({ username: user.username }, process.env.ACCESS_TOKEN_SECRET);
+        let access_token = jwt.sign({ username: user.username }, process.env.ACCESS_TOKEN_SECRET, {
+          expiresIn: '7d'
+        });
+        context.res.cookie('jwt', access_token, {
+          httpOnly: true,
+        });
+        return user.username;
+      },
+    });
+    t.string('relogin', {
+      resolve: async (_parent, _args, context: Context) => {
+        if (!context.username) {
+          return null;
+        }
+        let access_token = jwt.sign({ username: context.username }, process.env.ACCESS_TOKEN_SECRET, {
+          expiresIn: '7d'
+        });
+        context.res.cookie('jwt', access_token, {
+          httpOnly: true,
+        });
+        return context.username;
+      },
+    });
+    t.string('logout', {
+      resolve: async (_parent, _args, context: Context) => {
+        context.res.clearCookie('jwt');
+        return context.username;
       },
     });
   },

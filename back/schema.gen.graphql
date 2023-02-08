@@ -4,6 +4,8 @@
 
 type Mutation {
   login(password: String!, username: String!): String!
+  logout: String
+  relogin: String
 }
 
 type Post {
