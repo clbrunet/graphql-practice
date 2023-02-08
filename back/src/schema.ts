@@ -96,6 +96,12 @@ const Mutation = mutationType({
         password: nonNull(stringArg()),
       },
       resolve: async (_parent, args, context: Context) => {
+        if (args.username.length === 0) {
+          throw new GraphQLError('Username must not be empty')
+        }
+        if (args.password.length === 0) {
+          throw new GraphQLError('Password must not be empty')
+        }
         let user = await context.prisma.user.findUnique({ where: { username: args.username } });
         if (user) {
           throw new GraphQLError('Username already exists')
