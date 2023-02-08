@@ -22,14 +22,15 @@ function User() {
 
   const postsElements = data?.posts?.map((post, index) => {
     return (
-      <pre style={{ textAlign: 'left' }} key={index}>
-        <code>{JSON.stringify(post, null, 2)}</code>
-      </pre>
+      <div style={{ borderStyle: 'solid', width: 'fit-content', padding: '5px', marginBottom: '15px' }} key={index}>
+        <h4>{post.title}</h4>
+        <p>{post.content}</p>
+      </div>
     );
   }) || 'Loading...';
 
   return (
-    <div className="User">
+    <div className="User" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
       <h1>{username}'s posts :</h1>
       {postsElements}
     </div>

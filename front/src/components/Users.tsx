@@ -1,5 +1,5 @@
 import { useQuery } from '@apollo/client';
-import { useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { graphql } from '../gql';
 
 export const GET_USERS = graphql(/* GraphQL */ `
@@ -16,24 +16,24 @@ query GetUsers {
 
 function Users() {
   const { data } = useQuery(GET_USERS);
-  const navigate = useNavigate();
 
-  const onUserClick = (username: string) => {
-    navigate(`/users/${username}`);
-  }
-
-  const usersElements = data?.users.map((user) => {
+  const usersElements = data?.users.map((user, index) => {
     return (
-      <pre style={{ textAlign: 'left' }} key={user.username} onClick={() => onUserClick(user.username)}>
-        <code>{JSON.stringify(user, null, 2)}</code>
-      </pre>
+      <p key={index}>
+        <Link to={'/users/' + user.username}>
+          {user.username}
+        </Link>
+        , {user.posts.length} posts
+      </p>
     );
   }) || 'Loading...';
 
   return (
     <div className="Users">
       <h1>Users :</h1>
-      {usersElements}
+      <div style={{ display: 'flex', flexDirection: 'column' }}>
+        {usersElements}
+      </div>
     </div>
   );
 }
