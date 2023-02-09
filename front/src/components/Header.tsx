@@ -1,7 +1,8 @@
 import { useMutation } from '@apollo/client';
-import { Link, useNavigate } from 'react-router-dom';
+import { useContext } from 'react';
+import { Link } from 'react-router-dom';
+import { UsernameContext } from '../App';
 import { graphql } from '../gql';
-import { clearUsername, getUsername } from '../username';
 
 const LOGOUT = graphql(/* GraphQL */ `
 mutation Logout {
@@ -10,13 +11,11 @@ mutation Logout {
 `);
 
 function Header() {
-  const username = getUsername();
-  const navigate = useNavigate();
+  const { username, setUsername } = useContext(UsernameContext);
   const [logout] = useMutation(LOGOUT, {
     onCompleted(_data, clientOptions) {
-      clearUsername();
+      setUsername('');
       clientOptions?.client?.resetStore();
-      navigate('/');
     },
   });
 

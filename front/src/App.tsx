@@ -6,9 +6,16 @@ import User from './pages/User';
 import SignIn from './pages/SignIn';
 import { graphql } from './gql';
 import { useMutation } from '@apollo/client';
-import { useEffect } from 'react';
-import { setUsername } from './username';
+import { createContext, Dispatch, SetStateAction, useEffect, useState } from 'react';
+// import { setUsername } from './username';
 import Posts from './pages/Posts';
+
+type UsernameContextType = {
+  username: string | undefined;
+  setUsername: Dispatch<SetStateAction<string | undefined>>;
+};
+
+export const UsernameContext = createContext<UsernameContextType>(null!);
 
 const RELOGIN = graphql(/* GraphQL */`
 mutation Relogin {
@@ -17,6 +24,7 @@ mutation Relogin {
 `);
 
 function App() {
+  const [username, setUsername] = useState<string | undefined>(undefined);
   const [relogin] = useMutation(RELOGIN, {
     onCompleted(data, clientOptions) {
       if (!data.relogin!) {
@@ -32,13 +40,15 @@ function App() {
 
   return (
     <div className="App">
-      <Header />
-      <Routes>
-        <Route path="/" element={<Posts />} />
-        <Route path="/users" element={<Users />} />
-        <Route path="/users/:username" element={<User />} />
-        <Route path="/signin" element={<SignIn />} />
-      </Routes>
+      <UsernameContext.Provider value={{ username, setUsername }}>
+        <Header />
+        <Routes>
+          <Route path="/" element={<Posts />} />
+          <Route path="/users" element={<Users />} />
+          <Route path="/users/:username" element={<User />} />
+          <Route path="/signin" element={<SignIn />} />
+        </Routes>
+      </UsernameContext.Provider>
     </div>
   );
 }

@@ -1,8 +1,8 @@
 import { useApolloClient, useMutation } from '@apollo/client';
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { UsernameContext } from '../App';
 import { graphql } from '../gql';
-import { setUsername } from '../username';
 
 const LOGIN = graphql(/* GraphQL */ `
 mutation Login($username: String!, $password: String!) {
@@ -17,6 +17,7 @@ mutation Register($username: String!, $password: String!) {
 `);
 
 function SignIn() {
+  const { setUsername } = useContext(UsernameContext);
   const [form, setForm] = useState({
     username: '',
     password: '',
