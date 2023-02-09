@@ -7,7 +7,7 @@ import cors from 'cors';
 import bodyParser from 'body-parser';
 import cookieParser from 'cookie-parser';
 import { Context, context } from './context.js';
-import schema from './schema.js';
+import schema from './schema/index.js';
 
 const app = express();
 const httpServer = http.createServer(app);
