@@ -23,7 +23,7 @@ function Header() {
   return (
     <div style={{ display: 'flex', justifyContent: 'space-around' }}>
       <Link to="/">
-        Root
+        Posts
       </Link>
       <Link to="/users">
         Users

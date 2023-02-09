@@ -8,6 +8,7 @@ import { graphql } from './gql';
 import { useMutation } from '@apollo/client';
 import { useEffect } from 'react';
 import { setUsername } from './username';
+import Posts from './pages/Posts';
 
 const RELOGIN = graphql(/* GraphQL */`
 mutation Relogin {
@@ -33,7 +34,7 @@ function App() {
     <div className="App">
       <Header />
       <Routes>
-        <Route path="/" element={'Home'} />
+        <Route path="/" element={<Posts />} />
         <Route path="/users" element={<Users />} />
         <Route path="/users/:username" element={<User />} />
         <Route path="/signin" element={<SignIn />} />
