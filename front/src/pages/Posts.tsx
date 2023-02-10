@@ -24,7 +24,7 @@ function Posts() {
   }) || 'Loading...';
 
   return (
-    <div className="Posts" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+    <div className='Posts' style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
       <h1>Posts :</h1>
       {postsElements}
     </div>

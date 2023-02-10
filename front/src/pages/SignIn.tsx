@@ -1,6 +1,6 @@
 import { useApolloClient, useMutation } from '@apollo/client';
-import { useContext, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useContext, useEffect, useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { UsernameContext } from '../App';
 import { graphql } from '../gql';
 
@@ -17,12 +17,21 @@ mutation Register($username: String!, $password: String!) {
 `);
 
 function SignIn() {
+  let location = useLocation();
   const { setUsername } = useContext(UsernameContext);
   const [form, setForm] = useState({
     username: '',
     password: '',
     error_message: '',
   });
+  useEffect(() => {
+    if (location.state) {
+      setForm((prev) => ({
+        ...prev,
+        error_message: location.state,
+      }));
+    }
+  }, []);
   const variables = {
     username: form.username,
     password: form.password,
@@ -60,24 +69,20 @@ function SignIn() {
   });
 
   return (
-    <form onSubmit={(e) => e.preventDefault()} style={{ display: 'flex', flexDirection: 'column' }}>
-      <h4>Create User :</h4>
-      <label>
-        Username :
-        <input type='text' value={form.username}
-          onChange={(event) => setForm((prev) => ({
-            ...prev,
-            username: event.target.value,
-          }))} />
-      </label>
-      <label>
-        Password :
-        <input type='text' value={form.password}
-          onChange={(event) => setForm((prev) => ({
-            ...prev,
-            password: event.target.value,
-          }))} />
-      </label>
+    <form onSubmit={(e) => e.preventDefault()} >
+      <h4>Sign in :</h4>
+      <label htmlFor='username'>Username :</label>
+      <input id='username' type='text' value={form.username}
+        onChange={(event) => setForm((prev) => ({
+          ...prev,
+          username: event.target.value,
+        }))} />
+      <label htmlFor='password'>Password :</label>
+      <input id='password' type='text' value={form.password}
+        onChange={(event) => setForm((prev) => ({
+          ...prev,
+          password: event.target.value,
+        }))} />
       {form.error_message && <p style={{ color: 'red' }}>{form.error_message}</p>}
       <button onClick={() => login()} style={{ margin: 'auto' }}>Login</button>
       <button onClick={() => register()} style={{ margin: 'auto' }}>Register</button>

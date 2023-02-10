@@ -1,4 +1,4 @@
-import { ExpressContextFunctionArgument } from '@apollo/server/dist/esm/express4';
+import { ExpressContextFunctionArgument } from '@apollo/server/express4';
 import { PrismaClient } from '@prisma/client';
 import { Response } from 'express';
 import jwt from 'jsonwebtoken';

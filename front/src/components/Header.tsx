@@ -21,16 +21,19 @@ function Header() {
 
   return (
     <div style={{ display: 'flex', justifyContent: 'space-around' }}>
-      <Link to="/">
+      <Link to='/'>
         Posts
       </Link>
-      <Link to="/users">
+      <Link to='/createPost'>
+        Create post
+      </Link>
+      <Link to='/users'>
         Users
       </Link>
       {username ?
         <button onClick={() => logout()}>Logout</button>
         :
-        <Link to="/signIn">
+        <Link to='/signIn'>
           Sign in
         </Link>
       }

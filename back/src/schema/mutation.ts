@@ -71,5 +71,29 @@ export const Mutation = mutationType({
         return context.username;
       },
     });
+    t.field('createPost', {
+      type: 'Post',
+      args: {
+        title: nonNull(stringArg()),
+        content: nonNull(stringArg()),
+      },
+      resolve: async (_parent, args, context: Context) => {
+        if (!context.username) {
+          return null;
+        }
+        let post = await context.prisma.post.create({
+          data: {
+            title: args.title,
+            content: args.content,
+            author: {
+              connect: {
+                username: context.username,
+              }
+            },
+          }
+        });
+        return post;
+      },
+    });
   },
 });

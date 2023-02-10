@@ -28,7 +28,7 @@ function User() {
   }) || 'Loading...';
 
   return (
-    <div className="User" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+    <div className='User' style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
       <h1>{username}'s posts :</h1>
       {postsElements}
     </div>

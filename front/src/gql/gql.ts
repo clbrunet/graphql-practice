@@ -15,6 +15,7 @@ import { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-node/
 const documents = {
     "\nmutation Relogin {\n  relogin\n}\n": types.ReloginDocument,
     "\nmutation Logout {\n  logout\n}\n": types.LogoutDocument,
+    "\nmutation Mutation($title: String!, $content: String!) {\n  createPost(title: $title, content: $content) {\n    title\n  }\n}\n": types.MutationDocument,
     "\nquery GetAllPosts {\n  allPosts {\n    title\n    content\n    author {\n      username\n    }\n  }\n}\n": types.GetAllPostsDocument,
     "\nmutation Login($username: String!, $password: String!) {\n  login(username: $username, password: $password)\n}\n": types.LoginDocument,
     "\nmutation Register($username: String!, $password: String!) {\n  register(username: $username, password: $password)\n}\n": types.RegisterDocument,
@@ -44,6 +45,10 @@ export function graphql(source: "\nmutation Relogin {\n  relogin\n}\n"): (typeof
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function graphql(source: "\nmutation Logout {\n  logout\n}\n"): (typeof documents)["\nmutation Logout {\n  logout\n}\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\nmutation Mutation($title: String!, $content: String!) {\n  createPost(title: $title, content: $content) {\n    title\n  }\n}\n"): (typeof documents)["\nmutation Mutation($title: String!, $content: String!) {\n  createPost(title: $title, content: $content) {\n    title\n  }\n}\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */

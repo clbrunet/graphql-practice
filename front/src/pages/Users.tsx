@@ -29,7 +29,7 @@ function Users() {
   }) || 'Loading...';
 
   return (
-    <div className="Users">
+    <div className='Users'>
       <h1>Users :</h1>
       <div style={{ display: 'flex', flexDirection: 'column' }}>
         {usersElements}

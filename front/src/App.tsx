@@ -9,6 +9,7 @@ import { useMutation } from '@apollo/client';
 import { createContext, Dispatch, SetStateAction, useEffect, useState } from 'react';
 // import { setUsername } from './username';
 import Posts from './pages/Posts';
+import CreatePost from './pages/CreatePost';
 
 type UsernameContextType = {
   username: string | undefined;
@@ -27,26 +28,31 @@ function App() {
   const [username, setUsername] = useState<string | undefined>(undefined);
   const [relogin] = useMutation(RELOGIN, {
     onCompleted(data, clientOptions) {
-      if (!data.relogin!) {
-        return;
-      }
-      setUsername(data.relogin);
+      let username = data.relogin || '';
+      setUsername(username);
       clientOptions?.client?.resetStore();
     },
   });
   useEffect(() => {
     relogin();
   }, [relogin]);
+  if (username === undefined) {
+    return (
+      <>
+      </>
+    );
+  }
 
   return (
-    <div className="App">
+    <div className='App'>
       <UsernameContext.Provider value={{ username, setUsername }}>
         <Header />
         <Routes>
-          <Route path="/" element={<Posts />} />
-          <Route path="/users" element={<Users />} />
-          <Route path="/users/:username" element={<User />} />
-          <Route path="/signin" element={<SignIn />} />
+          <Route path='/' element={<Posts />} />
+          <Route path='/createPost' element={<CreatePost />} />
+          <Route path='/users' element={<Users />} />
+          <Route path='/users/:username' element={<User />} />
+          <Route path='/signin' element={<SignIn />} />
         </Routes>
       </UsernameContext.Provider>
     </div>

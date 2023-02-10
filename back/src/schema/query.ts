@@ -1,3 +1,4 @@
+import { GraphQLError } from 'graphql';
 import { queryType, stringArg } from 'nexus';
 import { Context } from '../context.js';
 
@@ -34,9 +35,9 @@ export const Query = queryType({
         username: stringArg(),
       },
       resolve: (_parent, args, context: Context) => {
-        let { username } = args;
-        if (username === undefined) {
-          username = context.username;
+        let username = args.username || context.username;
+        if (!username) {
+          throw new GraphQLError('No username provided or logged in user');
         }
         return context.prisma.user.findUnique({ where: { username } }).posts();
       },
