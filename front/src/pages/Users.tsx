@@ -20,10 +20,7 @@ function Users() {
   const usersElements = data?.users.map((user, index) => {
     return (
       <p key={index}>
-        <Link to={'/users/' + user.username}>
-          {user.username}
-        </Link>
-        , {user.posts.length} posts
+        <Link to={`/users/${user.username}`}>{user.username}</Link>, {user.posts.length} posts
       </p>
     );
   }) || 'Loading...';
