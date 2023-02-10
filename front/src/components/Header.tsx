@@ -33,7 +33,7 @@ function Header() {
       {username ?
         <button onClick={() => logout()}>Logout</button>
         :
-        <Link to='/signIn'>
+        <Link to='/signin'>
           Sign in
         </Link>
       }

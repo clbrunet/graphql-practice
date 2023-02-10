@@ -24,6 +24,7 @@ function CreatePost() {
     onCompleted(_data, _clientOptions) {
       navigate(`/users/${username}`);
     },
+    refetchQueries: ['GetUserPosts', 'GetAllPosts'],
   });
   if (username === '') {
     return (
