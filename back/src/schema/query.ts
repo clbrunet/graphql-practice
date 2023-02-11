@@ -25,8 +25,9 @@ export const Query = queryType({
     });
     t.nonNull.list.nonNull.field('allPosts', {
       type: 'Post',
-      resolve: (_parent, _args, context: Context) => {
-        return context.prisma.post.findMany();
+      resolve: async (_parent, _args, context: Context) => {
+        let posts = await context.prisma.post.findMany();
+        return posts.reverse();
       },
     });
     t.list.nonNull.field('posts', {
@@ -34,12 +35,13 @@ export const Query = queryType({
       args: {
         username: stringArg(),
       },
-      resolve: (_parent, args, context: Context) => {
+      resolve: async (_parent, args, context: Context) => {
         let username = args.username || context.username;
         if (!username) {
           throw new GraphQLError('No username provided or logged in user');
         }
-        return context.prisma.user.findUnique({ where: { username } }).posts();
+        let posts = await context.prisma.user.findUnique({ where: { username } }).posts();
+        return posts.reverse();
       },
     });
   },
