@@ -4,6 +4,7 @@ import { fileURLToPath } from 'url';
 import { Context } from '../context.js';
 import { Mutation } from './mutation.js';
 import { Query } from './query.js';
+import { Subscription } from './subscription.js';
 
 const User = objectType({
   name: 'User',
@@ -38,6 +39,7 @@ const schema = makeSchema({
     Post,
     Query,
     Mutation,
+    Subscription,
   ],
   outputs: {
     schema: join(dirname(fileURLToPath(import.meta.url)), '/../schema.gen.graphql'),

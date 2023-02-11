@@ -4,7 +4,8 @@ import bcrypt from 'bcrypt';
 import { Context } from '../context.js';
 import jwt from 'jsonwebtoken';
 import { Response } from 'express';
-import { JWT_COOKIE_KEY, SALT_ROUNDS } from '../constants.js';
+import { JWT_COOKIE_KEY, SALT_ROUNDS, USER_CREATED } from '../constants.js';
+import { pubsub } from './subscription.js';
 
 const signIn = (username: string, res: Response): string  => {
   let access_token = jwt.sign({ username }, process.env.ACCESS_TOKEN_SECRET, {
@@ -35,12 +36,13 @@ export const Mutation = mutationType({
         if (user) {
           throw new GraphQLError('Username already exists')
         }
-        await context.prisma.user.create({
+        user = await context.prisma.user.create({
           data: {
             username: args.username,
             password: bcrypt.hashSync(args.password, SALT_ROUNDS),
           }
         });
+        pubsub.publish(USER_CREATED, user);
         return signIn(args.username, context.res);
       },
     });
