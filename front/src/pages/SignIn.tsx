@@ -31,7 +31,7 @@ function SignIn() {
         error_message: location.state,
       }));
     }
-  }, []);
+  }, [location]);
   const variables = {
     username: form.username,
     password: form.password,

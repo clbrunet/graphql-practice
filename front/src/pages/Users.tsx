@@ -1,4 +1,5 @@
 import { useQuery } from '@apollo/client';
+import { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { graphql } from '../gql';
 
@@ -13,9 +14,30 @@ query GetUsers {
   }
 }
 `);
+const USER_CREATED = graphql(/* GraphQL */ `
+subscription UserCreated {
+  userCreated {
+    username
+  }
+}
+`);
 
 function Users() {
-  const { data } = useQuery(GET_USERS);
+  const { data, subscribeToMore } = useQuery(GET_USERS);
+  useEffect(() => {
+    subscribeToMore({
+      document: USER_CREATED,
+      updateQuery: (prev, { subscriptionData }) => {
+        let next = {
+          users: [...prev.users, {
+            username: subscriptionData.data.userCreated.username,
+            posts: [],
+          }]
+        };
+        return next;
+      },
+    });
+  }, [subscribeToMore]);
 
   const usersElements = data?.users.map((user, index) => {
     return (

@@ -21,6 +21,7 @@ const documents = {
     "\nmutation Register($username: String!, $password: String!) {\n  register(username: $username, password: $password)\n}\n": types.RegisterDocument,
     "\nquery GetUserPosts($username: String!) {\n  posts(username: $username) {\n    title\n    content\n  }\n}\n": types.GetUserPostsDocument,
     "\nquery GetUsers {\n  users {\n    username\n    posts {\n      title\n      content\n    }\n  }\n}\n": types.GetUsersDocument,
+    "\nsubscription UserCreated {\n  userCreated {\n    username\n  }\n}\n": types.UserCreatedDocument,
 };
 
 /**
@@ -69,6 +70,10 @@ export function graphql(source: "\nquery GetUserPosts($username: String!) {\n  p
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function graphql(source: "\nquery GetUsers {\n  users {\n    username\n    posts {\n      title\n      content\n    }\n  }\n}\n"): (typeof documents)["\nquery GetUsers {\n  users {\n    username\n    posts {\n      title\n      content\n    }\n  }\n}\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\nsubscription UserCreated {\n  userCreated {\n    username\n  }\n}\n"): (typeof documents)["\nsubscription UserCreated {\n  userCreated {\n    username\n  }\n}\n"];
 
 export function graphql(source: string) {
   return (documents as any)[source] ?? {};
