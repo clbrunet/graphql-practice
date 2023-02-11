@@ -13,7 +13,7 @@ const signIn = (username: string, res: Response): string  => {
   });
   res.cookie(JWT_COOKIE_KEY, access_token, {
     httpOnly: true,
-    maxAge: 60 * 60 * 24 * 7,
+    maxAge: 1000 * 60 * 60 * 24 * 7,
   });
   return username;
 }
