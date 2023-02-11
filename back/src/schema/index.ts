@@ -42,7 +42,7 @@ const schema = makeSchema({
     Subscription,
   ],
   outputs: {
-    schema: join(dirname(fileURLToPath(import.meta.url)), '/../schema.gen.graphql'),
+    schema: join(dirname(fileURLToPath(import.meta.url)), '/../../schema.gen.graphql'),
   },
 });
 
