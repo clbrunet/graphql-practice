@@ -1,26 +1,33 @@
 import { GraphQLError } from 'graphql';
-import { mutationType, nonNull, stringArg } from 'nexus';
+import { idArg, mutationType, nonNull, stringArg } from 'nexus';
 import bcrypt from 'bcrypt';
 import { Context } from '../context.js';
 import jwt from 'jsonwebtoken';
 import { Response } from 'express';
 import { JWT_COOKIE_KEY, SALT_ROUNDS, USER_CREATED } from '../constants.js';
 import { pubsub } from './subscription.js';
+import { User } from '@prisma/client';
 
-const signIn = (username: string, res: Response): string  => {
-  let access_token = jwt.sign({ username }, process.env.ACCESS_TOKEN_SECRET, {
+const signIn = (user: User, res: Response): User => {
+  let access_token = jwt.sign({
+    user: {
+      id: user.id.toString(),
+      username: user.username,
+    }
+  }, process.env.ACCESS_TOKEN_SECRET, {
     expiresIn: '7d'
   });
   res.cookie(JWT_COOKIE_KEY, access_token, {
     httpOnly: true,
     maxAge: 1000 * 60 * 60 * 24 * 7,
   });
-  return username;
+  return user;
 }
 
 export const Mutation = mutationType({
   definition(t) {
-    t.nonNull.string('register', {
+    t.nonNull.field('register', {
+      type: 'User',
       args: {
         username: nonNull(stringArg()),
         password: nonNull(stringArg()),
@@ -43,10 +50,11 @@ export const Mutation = mutationType({
           }
         });
         pubsub.publish(USER_CREATED, user);
-        return signIn(args.username, context.res);
+        return signIn(user, context.res);
       },
     });
-    t.nonNull.string('login', {
+    t.nonNull.field('login', {
+      type: 'User',
       args: {
         username: nonNull(stringArg()),
         password: nonNull(stringArg()),
@@ -56,15 +64,17 @@ export const Mutation = mutationType({
         if (!user || !bcrypt.compareSync(args.password, user.password)) {
           throw new GraphQLError('Invalid username or password')
         }
-        return signIn(user.username, context.res);
+        return signIn(user, context.res);
       },
     });
-    t.string('relogin', {
+    t.nonNull.field('relogin', {
+      type: 'User',
       resolve: async (_parent, _args, context: Context) => {
         if (!context.username) {
-          return null;
+          throw new GraphQLError('User credentials missing')
         }
-        return signIn(context.username, context.res);
+        let user = await context.prisma.user.findUnique({ where: { username: context.username } });
+        return signIn(user, context.res);
       },
     });
     t.string('logout', {
@@ -95,6 +105,29 @@ export const Mutation = mutationType({
           }
         });
         return post;
+      },
+    });
+    t.boolean('toggleLike', {
+      args: {
+        postId: nonNull(idArg()),
+      },
+      resolve: async (_parent, args, context: Context) => {
+        if (!context.username) {
+          return null;
+        }
+        let user = await context.prisma.user.findUnique({ where: { username: context.username } });
+        const userId_postId = {
+          userId: user.id,
+          postId: parseInt(args.postId),
+        }
+        let like = await context.prisma.like.findUnique({ where: { userId_postId, } });
+        if (like) {
+          await context.prisma.like.delete({ where: { userId_postId, } });
+          return false;
+        } else {
+          await context.prisma.like.create({ data: userId_postId });
+          return true;
+        }
       },
     });
   },

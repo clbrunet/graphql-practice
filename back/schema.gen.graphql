@@ -2,17 +2,25 @@
 ### Do not make changes to this file directly
 
 
+type Like {
+  postId: ID!
+  userId: ID!
+}
+
 type Mutation {
   createPost(content: String!, title: String!): Post
-  login(password: String!, username: String!): String!
+  login(password: String!, username: String!): User!
   logout: String
-  register(password: String!, username: String!): String!
-  relogin: String
+  register(password: String!, username: String!): User!
+  relogin: User!
+  toggleLike(postId: ID!): Boolean
 }
 
 type Post {
   author: User!
   content: String!
+  id: ID!
+  likes: [Like!]!
   title: String!
 }
 
@@ -28,6 +36,7 @@ type Subscription {
 }
 
 type User {
+  id: ID!
   posts: [Post!]!
   username: String!
 }

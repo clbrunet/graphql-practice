@@ -7,8 +7,15 @@ import Post from '../components/Post';
 export const GET_USER_POSTS = graphql(/* GraphQL */ `
 query GetUserPosts($username: String!) {
   posts(username: $username) {
+    id
     title
     content
+    author {
+      username
+    }
+    likes {
+      userId
+    }
   }
 }
 `);
@@ -23,7 +30,14 @@ function User() {
 
   const postsElements = data?.posts?.map((post, index) => {
     return (
-      <Post title={post.title} content={post.content} key={index} />
+      <Post
+        title={post.title}
+        content={post.content}
+        author={post.author.username}
+        key={index}
+        id={post.id}
+        likes={post.likes}
+      />
     );
   }) || 'Loading...';
 

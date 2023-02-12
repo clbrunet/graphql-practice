@@ -7,36 +7,46 @@ import SignIn from './pages/SignIn';
 import { graphql } from './gql';
 import { useMutation } from '@apollo/client';
 import { createContext, Dispatch, SetStateAction, useEffect, useState } from 'react';
-// import { setUsername } from './username';
 import Posts from './pages/Posts';
 import CreatePost from './pages/CreatePost';
 
-type UsernameContextType = {
-  username: string | undefined;
-  setUsername: Dispatch<SetStateAction<string | undefined>>;
+export type UserState = undefined | null | {
+  id: string;
+  username: string;
 };
 
-export const UsernameContext = createContext<UsernameContextType>(null!);
+type UserContextType = {
+  user: UserState;
+  setUser: Dispatch<SetStateAction<UserState>>;
+};
+
+export const UserContext = createContext<UserContextType>(null!);
 
 const RELOGIN = graphql(/* GraphQL */`
 mutation Relogin {
-  relogin
+  relogin {
+    id
+    username
+  }
 }
 `);
 
 function App() {
-  const [username, setUsername] = useState<string | undefined>(undefined);
+  const [user, setUser] = useState<UserState>(undefined);
   const [relogin] = useMutation(RELOGIN, {
     onCompleted(data, clientOptions) {
-      let username = data.relogin || '';
-      setUsername(username);
+      setUser(data.relogin);
+      clientOptions?.client?.resetStore();
+    },
+    onError(_error, clientOptions) {
+      setUser(null);
       clientOptions?.client?.resetStore();
     },
   });
   useEffect(() => {
     relogin();
   }, [relogin]);
-  if (username === undefined) {
+  if (user === undefined) {
     return (
       <>
       </>
@@ -45,7 +55,7 @@ function App() {
 
   return (
     <div className='App'>
-      <UsernameContext.Provider value={{ username, setUsername }}>
+      <UserContext.Provider value={{ user, setUser }}>
         <Header />
         <Routes>
           <Route path='/' element={<Posts />} />
@@ -54,7 +64,7 @@ function App() {
           <Route path='/users/:username' element={<User />} />
           <Route path='/signin' element={<SignIn />} />
         </Routes>
-      </UsernameContext.Provider>
+      </UserContext.Provider>
     </div>
   );
 }

@@ -1,7 +1,7 @@
 import { useMutation } from '@apollo/client';
 import { useContext, useState } from 'react';
 import { Navigate, useNavigate } from 'react-router-dom';
-import { UsernameContext } from '../App';
+import { UserContext } from '../App';
 import { graphql } from '../gql';
 
 const CREATE_POST = graphql(/* GraphQL */ `
@@ -13,7 +13,7 @@ mutation Mutation($title: String!, $content: String!) {
 `);
 
 function CreatePost() {
-  const { username } = useContext(UsernameContext);
+  const { user } = useContext(UserContext);
   const navigate = useNavigate();
   const [form, setForm] = useState({
     title: '',
@@ -22,11 +22,11 @@ function CreatePost() {
   const [createPost] = useMutation(CREATE_POST, {
     variables: form,
     onCompleted(_data, _clientOptions) {
-      navigate(`/users/${username}`);
+      navigate(`/users/${user?.username}`);
     },
     refetchQueries: ['GetUserPosts', 'GetAllPosts'],
   });
-  if (username === '') {
+  if (!user) {
     return (
       <Navigate to='/signin' state={'Please sign in to create a post'}/>
     );

@@ -1,24 +1,30 @@
 import { useApolloClient, useMutation } from '@apollo/client';
 import { useContext, useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { UsernameContext } from '../App';
+import { UserContext, UserState } from '../App';
 import { graphql } from '../gql';
 
 const LOGIN = graphql(/* GraphQL */ `
 mutation Login($username: String!, $password: String!) {
-  login(username: $username, password: $password)
+  login(username: $username, password: $password) {
+    id
+    username
+  }
 }
 `);
 
 const REGISTER = graphql(/* GraphQL */ `
 mutation Register($username: String!, $password: String!) {
-  register(username: $username, password: $password)
+  register(username: $username, password: $password) {
+    id
+    username
+  }
 }
 `);
 
 function SignIn() {
   let location = useLocation();
-  const { setUsername } = useContext(UsernameContext);
+  const { setUser } = useContext(UserContext);
   const [form, setForm] = useState({
     username: '',
     password: '',
@@ -38,8 +44,8 @@ function SignIn() {
   };
   const client = useApolloClient();
   const navigate = useNavigate();
-  const onSignInCompleted = (username: string) => {
-    setUsername(username);
+  const onSignInCompleted = (user: UserState) => {
+    setUser(user);
     client.resetStore();
     navigate('/');
   };
